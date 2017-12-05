@@ -17,19 +17,19 @@ public class ContacteDB {
     private static final String PWD = "d4t4b4se!"; // idgaf si me robais la contra :v
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     
-    private static final String CONTACTE_TABLE = "contacte";
-    private static final String TELEFON_TABLE = "telefon";
-    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ContacteEntities db = new ContacteEntities(URL, USER, PWD, DRIVER, CONTACTE_TABLE, TELEFON_TABLE);
+        ContacteEntities db = new ContacteEntities(URL, USER, PWD, DRIVER);
         db.createConnection();
         
         if (db.isConnectionCreated()) {
-            ArrayList<Contacte> contactes = db.contacteQuery("select * from "+CONTACTE_TABLE);
-            ArrayList<Telefon> telefons = db.telefonQuery("select * from "+TELEFON_TABLE);
+            Contacte[] contactes = db.getContactes().select();
+            for(int i=0; i<contactes.length; i++) {
+                System.out.println(contactes[i].getNom());
+            }
+            db.getContactes().insert(new Contacte());
         }
     }
     

@@ -32,6 +32,11 @@ public class Contacte implements Serializable, PropertyChangeListener {
         setNom(nom);
     }
     
+    public Contacte(String nom) {
+        propertySupport = new PropertyChangeSupport(this);
+        setNom(nom);
+    }
+    
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         

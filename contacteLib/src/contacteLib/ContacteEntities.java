@@ -21,37 +21,48 @@ public class ContacteEntities {
     private String user;
     private String pwd;
     private String driver;
-    private String contacteTable;
-    private String telefonTable;
     private boolean createConnection;
     
-    public ContacteEntities(String url, String user, String pwd, String driver, 
-                 String contacteTable, String telefonTable) {
+    public ContacteEntities(String url, String user, String pwd, String driver) {
         this.url = url;
         this.user = user;
         this.pwd = pwd;
         this.driver = driver;
-        this.contacteTable = contacteTable;
-        this.telefonTable = telefonTable;
     }
     
+    /**
+     * Returns the current connection
+     * @return 
+     */
     public static Connection getConnection() {
         return connection;
     }
 
+    /**
+     * Sets the new connection
+     * @param connection 
+     */
     public static void setConnection(Connection connection) {
         ContacteEntities.connection = connection;
     }
     
+    /**
+     * Returns whether the connection was successful
+     * @return 
+     */
     public boolean isConnectionCreated() {
         return createConnection;
     }
     
+    /**
+     * Connects to the server
+     */
     public void createConnection() {
         this.createConnection = false;
         try {
             Class.forName(driver);
             setConnection(DriverManager.getConnection(url, user, pwd));
+            initTables();
             this.createConnection = true;
         } catch(Exception e) {
             System.out.println("Couldn't connect to the database.");
@@ -59,6 +70,9 @@ public class ContacteEntities {
         }
     }
     
+    /**
+     * Closes the current connection
+     */
     public void closeConnection() {
         try {
             getConnection().close();
@@ -67,64 +81,30 @@ public class ContacteEntities {
         }
     }
     // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Tables">
+    private Contactes contactes;
+    private Telefons telefons;
+    
+    public void initTables() {
+        setContactes(new Contactes(getConnection()));
+        setTelefons(new Telefons(getConnection()));
+    }
+    
+    public Contactes getContactes() {
+        return contactes;
+    }
 
-    // <editor-fold defaultstate="collapsed" desc="Data retreiving">
-    // Contacte Table
-    public ArrayList<Contacte> contacteQuery(String query) {
-        ArrayList<Contacte> list = new ArrayList<Contacte>();
-        try {
-            Statement instruc = getConnection().createStatement();
-            ResultSet result = instruc.executeQuery(query);
-            while (result.next()) {
-                Contacte c = new Contacte(result.getInt(1), result.getString(2));
-                list.add(c);
-            }
-            result.close();
-            instruc.close();
-        } catch (SQLException e) {
-            System.out.println("Couldn't retreive the 'contactes' table");
-            e.printStackTrace();
-        }
-        return list;
+    public void setContactes(Contactes contactes) {
+        this.contactes = contactes;
     }
-    
-    // Telefon Table
-    public ArrayList<Telefon> telefonQuery(String query) {
-        ArrayList<Telefon> list = new ArrayList<Telefon>();
-        try {
-            Statement instruc = getConnection().createStatement();
-            ResultSet result = instruc.executeQuery(query);
-            while (result.next()) {
-                Telefon t = new Telefon(result.getInt(1), result.getString(2), 
-                                        result.getString(3), result.getInt(4));
-                list.add(t);
-            }
-            result.close();
-            instruc.close();
-        } catch (SQLException e) {
-            System.out.println("Couldn't retreive the 'contactes' table");
-            e.printStackTrace();
-        }
-        return list;
+
+    public Telefons getTelefons() {
+        return telefons;
     }
-    
-    // Obtain last ID of a table
-    public int getLastID(String table) {
-        int id = 0;
-        String consulta="SELECT MAX(ID) FROM "+table;
-        try {
-            Statement instruc = getConnection().createStatement();
-            ResultSet result = instruc.executeQuery(consulta);
-            result.next();
-            id = result.getInt(1)+1;
-            result.close();
-            instruc.close();
-        }
-        catch (SQLException e) {
-            System.out.println("Couldn't retreive the last id of table '"+table+"'");
-            e.printStackTrace();
-        }
-        return id;
+
+    public void setTelefons(Telefons telefons) {
+        this.telefons = telefons;
     }
     // </editor-fold>
 }
