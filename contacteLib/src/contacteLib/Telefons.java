@@ -1,6 +1,7 @@
 package contacteLib;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -46,12 +47,41 @@ public class Telefons extends Table implements I_Table<Telefon> {
     
     @Override
     public void insert(Telefon telefon) {
-        
+        try {
+            PreparedStatement statement = getConnection().prepareStatement("INSERT INTO "+ TABLE +" VALUES (?, ?, ?, ?)");
+            int id;
+            if (telefon.getId() == null) {
+                id = lastId()+1;
+            } else {
+                id = telefon.getId();
+            }
+            statement.setInt(1, id);
+            statement.setString(2, telefon.getTelefon());
+            statement.setString(3, telefon.getDescripcio());
+            statement.setInt(4, telefon.getIdcontacte());
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("Couldn't insert in the '"+TABLE+"' table.");
+            e.printStackTrace();
+        }
     }
     
     @Override
-    public void delete(Telefon telefon) {
-        
+    public void delete(Integer id) {
+        try {
+            if (id == null) {
+                System.err.println("Invalid ID");
+            } else {
+                PreparedStatement statement = getConnection().prepareStatement("DELETE FROM "+ TABLE +" WHERE id=?");
+                statement.setInt(1, id);
+                statement.executeUpdate();
+                statement.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("Couldn't insert in the '"+TABLE+"' table.");
+            e.printStackTrace();
+        }
     }
     
 }

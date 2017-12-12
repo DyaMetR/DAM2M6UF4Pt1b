@@ -17,7 +17,7 @@ public class Contacte implements Serializable, PropertyChangeListener {
     public static final String PROP_ID = "id";
     public static final String PROP_NOM = "nom";
     
-    private int id;
+    private Integer id;
     private String nom;
     
     private PropertyChangeSupport propertySupport;
@@ -43,14 +43,19 @@ public class Contacte implements Serializable, PropertyChangeListener {
     }
     
     // <editor-fold defaultstate="collapsed" desc="G/S">
-    public int getId() {
+    public Integer getId() {
         return this.id;
     }
     
     public void setId(int value) {
-        int oldValue = this.id;
+        int oldValue;
+        if (getId() == null) {
+            oldValue = 0;
+        } else {
+            oldValue = getId();
+        }
         this.id = value;
-        propertySupport.firePropertyChange(PROP_ID, oldValue, this.id);
+        propertySupport.firePropertyChange(PROP_ID, (int) oldValue, (int) this.id);
     }
     
     public String getNom() {

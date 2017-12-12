@@ -21,7 +21,7 @@ public class Telefon implements Serializable, PropertyChangeListener {
     public static final String PROP_DESCRIPCIO = "descripcio";
     public static final String PROP_IDCONTACTE = "idcontacte";
     
-    private int id;
+    private Integer id;
     private String telefon;
     private String descripcio;
     private int idcontacte;
@@ -33,6 +33,13 @@ public class Telefon implements Serializable, PropertyChangeListener {
     public Telefon (int id, String telefon, String descripcio, int idcontacte){
         propertySupport = new PropertyChangeSupport(this);
         this.id = id;
+        this.telefon = telefon;
+        this.descripcio = descripcio;
+        this.idcontacte = idcontacte;
+    }
+    
+    public Telefon (String telefon, String descripcio, int idcontacte){
+        propertySupport = new PropertyChangeSupport(this);
         this.telefon = telefon;
         this.descripcio = descripcio;
         this.idcontacte = idcontacte;
@@ -52,14 +59,19 @@ public class Telefon implements Serializable, PropertyChangeListener {
         this.propertySupport = propertySupport;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
     public void setId(int id) {
-        int oldValue = this.id;
+        int oldValue;
+        if (getId() == null) {
+            oldValue = 0;
+        } else {
+            oldValue = getId();
+        }
         this.id = id;
-        propertySupport.firePropertyChange(PROP_ID, oldValue, this.id);
+        propertySupport.firePropertyChange(PROP_ID, (int) oldValue, (int) this.id);
     }
 
     public String getTelefon() {
